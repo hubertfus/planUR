@@ -8,6 +8,7 @@ import { StatusBar, useColorScheme } from "react-native";
 import { useFonts } from "expo-font";
 import { useEffect } from "react";
 import * as SplashScreen from "expo-splash-screen";
+import { WeeksProvider } from "@/ctx/WeeksContext";
 
 export default function RootLayout() {
   const router = useRouter();
@@ -29,14 +30,19 @@ export default function RootLayout() {
   }
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <StatusBar
-        barStyle={colorScheme === "dark" ? "light-content" : "dark-content"}
-      />
-      <Stack>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="options" options={{ headerTitle: "Ustawienia" }} />
-        <Stack.Screen name="initial" options={{ headerShown: false }} />
-      </Stack>
+      <WeeksProvider>
+        <StatusBar
+          barStyle={colorScheme === "dark" ? "light-content" : "dark-content"}
+        />
+        <Stack>
+          <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="options"
+            options={{ headerTitle: "Ustawienia" }}
+          />
+          <Stack.Screen name="initial" options={{ headerShown: false }} />
+        </Stack>
+      </WeeksProvider>
     </ThemeProvider>
   );
 }

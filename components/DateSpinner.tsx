@@ -10,27 +10,26 @@ import { ThemedText } from "./ThemedText";
 import { daysPolish } from "@/constants/Months";
 
 type DateSpinnerProps = {
-  initialStartDate: Date;
+  currentDate: Date; // Nowa właściwość
   onDateSelected?: (date: Date) => void;
 };
 
-function DateSpinner({ onDateSelected }: DateSpinnerProps) {
+function DateSpinner({ currentDate, onDateSelected }: DateSpinnerProps) {
   const [dates, setDates] = useState<Date[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const flatListRef = useRef<FlatList>(null);
 
   useEffect(() => {
-    const today = new Date();
-    const monthDates = generateDatesForMonth(today);
+    const monthDates = generateDatesForMonth(currentDate);
     setDates(monthDates);
-    setSelectedDate(today);
+    setSelectedDate(currentDate);
 
     if (onDateSelected) {
-      onDateSelected(today);
+      onDateSelected(currentDate);
     }
 
     const todayIndex = monthDates.findIndex(
-      (date) => date.toDateString() === today.toDateString()
+      (date) => date.toDateString() === currentDate.toDateString()
     );
 
     if (flatListRef.current && todayIndex !== -1) {
@@ -41,7 +40,7 @@ function DateSpinner({ onDateSelected }: DateSpinnerProps) {
         });
       }, 0);
     }
-  }, []);
+  }, [currentDate]);
 
   const generateDatesForMonth = (date: Date): Date[] => {
     const year = date.getFullYear();
@@ -125,6 +124,7 @@ function DateSpinner({ onDateSelected }: DateSpinnerProps) {
 const styles = StyleSheet.create({
   container: {
     padding: 10,
+    height: 150,
   },
   dateItem: {
     width: 60,

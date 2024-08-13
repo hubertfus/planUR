@@ -34,7 +34,6 @@ export default function Index() {
   });
 
   const handleSelect = (item: string, name?: string, index?: number) => {
-    console.log(item, name, index);
     if (name) {
       setUserData((prev) => ({
         ...prev,
@@ -49,7 +48,10 @@ export default function Index() {
         (res) =>
           res.json().then((data) => {
             try {
-              AsyncStorage.setItem("schedule", JSON.stringify(data));
+              AsyncStorage.setItem(
+                "schedule",
+                JSON.stringify(data[userData.group])
+              );
               router.replace("/");
             } catch (e) {
               console.log(e);
