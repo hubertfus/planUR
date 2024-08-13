@@ -1,5 +1,13 @@
-import React, { useEffect, useRef } from "react";
-import { Animated, StyleSheet, useColorScheme, View } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import {
+  Alert,
+  Animated,
+  Modal,
+  StyleSheet,
+  Text,
+  useColorScheme,
+  View,
+} from "react-native";
 import Button from "@/components/Button";
 import { HelloWave } from "@/components/HelloWave";
 import { ThemedText } from "@/components/ThemedText";
@@ -11,6 +19,7 @@ export default function Initial() {
   const slideAnimTop = useRef(new Animated.Value(-1000)).current;
   const slideAnimBottom = useRef(new Animated.Value(1000)).current;
   const router = useRouter();
+  const [count, setCount] = useState(0);
 
   useEffect(() => {
     Animated.parallel([
@@ -77,7 +86,13 @@ export default function Initial() {
               },
             ]}
           >
-            <HelloWave size={100} />
+            <HelloWave
+              size={100}
+              onPress={() => {
+                setCount((prev) => prev + 1);
+                count > 5 && Alert.alert("już się pobawiłeś?");
+              }}
+            />
           </View>
 
           <Button title="dalej" onPress={sumbitHandler} />

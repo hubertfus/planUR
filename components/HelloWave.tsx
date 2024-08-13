@@ -7,14 +7,14 @@ import Animated, {
   withSequence,
 } from "react-native-reanimated";
 
-import { ThemedText } from "@/components/ThemedText";
 import { useEffect } from "react";
 
 type Props = {
   size?: number;
+  onPress?: () => void;
 };
 
-export function HelloWave({ size }: Props) {
+export function HelloWave({ size, onPress }: Props) {
   const rotationAnimation = useSharedValue(0);
   useEffect(() => {
     startAnimation();
@@ -26,10 +26,10 @@ export function HelloWave({ size }: Props) {
         withTiming(25, { duration: 150 }),
         withTiming(0, { duration: 150 })
       ),
-      4, // Run the animation 4 times
-      false, // Not to reverse
+      4,
+      false,
       () => {
-        rotationAnimation.value = 0; // Reset the value after animation completes
+        rotationAnimation.value = 0;
       }
     );
   };
@@ -39,7 +39,12 @@ export function HelloWave({ size }: Props) {
   }));
 
   return (
-    <Pressable onPress={startAnimation}>
+    <Pressable
+      onPress={() => {
+        startAnimation();
+        onPress && onPress();
+      }}
+    >
       <Animated.View style={animatedStyle}>
         <Text
           style={[

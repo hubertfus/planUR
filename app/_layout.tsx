@@ -8,7 +8,6 @@ import { StatusBar, useColorScheme } from "react-native";
 import { useFonts } from "expo-font";
 import { useEffect } from "react";
 import * as SplashScreen from "expo-splash-screen";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function RootLayout() {
   const router = useRouter();
@@ -20,16 +19,6 @@ export default function RootLayout() {
   SplashScreen.preventAutoHideAsync();
 
   useEffect(() => {
-    const checkSchedule = async () => {
-      try {
-        const jsonValue = await AsyncStorage.getItem("schedule");
-        if (jsonValue == null) router.replace("initial");
-      } catch (e) {
-        // error reading value
-      }
-    };
-    checkSchedule();
-
     if (loaded) {
       SplashScreen.hideAsync();
     }
