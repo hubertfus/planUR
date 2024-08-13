@@ -1,18 +1,21 @@
+import React, { useEffect } from "react";
 import {
-  DarkTheme,
   DefaultTheme,
+  DarkTheme,
   ThemeProvider,
 } from "@react-navigation/native";
 import { Stack, useRouter } from "expo-router";
-import { StatusBar, useColorScheme } from "react-native";
+import { StatusBar } from "react-native";
 import { useFonts } from "expo-font";
-import { useEffect } from "react";
 import * as SplashScreen from "expo-splash-screen";
 import { WeeksProvider } from "@/ctx/WeeksContext";
+import {
+  ThemeToggleProvider,
+  useThemeToggle,
+} from "@/hooks/ThemeToggleContext";
 
 export default function RootLayout() {
   const router = useRouter();
-  const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
@@ -28,11 +31,25 @@ export default function RootLayout() {
   if (!loaded) {
     return null;
   }
+
   return (
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+    <ThemeToggleProvider>
+      <AppContent />
+    </ThemeToggleProvider>
+  );
+}
+
+function AppContent() {
+  const { theme } = useThemeToggle(); // Używamy motywu z kontekstu
+
+  // Mapowanie stringów na obiekty Theme
+  const navigationTheme = theme === "dark" ? DarkTheme : DefaultTheme;
+
+  return (
+    <ThemeProvider value={navigationTheme}>
       <WeeksProvider>
         <StatusBar
-          barStyle={colorScheme === "dark" ? "light-content" : "dark-content"}
+          barStyle={theme === "dark" ? "light-content" : "dark-content"}
         />
         <Stack>
           <Stack.Screen name="index" options={{ headerShown: false }} />

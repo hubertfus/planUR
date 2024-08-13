@@ -19,6 +19,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import ClassesListItem from "@/components/ClassesListItem";
 import { WeeksContext } from "@/ctx/WeeksContext";
+import { useThemeToggle } from "@/hooks/ThemeToggleContext";
 
 export default function Index() {
   const router = useRouter();
@@ -27,6 +28,7 @@ export default function Index() {
   const colorScheme = useColorScheme() ?? "light";
   const [week, setWeek] = useState<"A" | "B">("A");
   const { getWeekType, setWeeks } = useContext(WeeksContext);
+  const { toggleTheme, theme } = useThemeToggle();
   useEffect(() => {
     let e;
 
@@ -82,7 +84,7 @@ export default function Index() {
       }}
     >
       <View style={styles.headerContainer}>
-        <IconButton name="sunny-outline" size={36} />
+        <IconButton name="sunny-outline" size={36} onPress={toggleTheme} />
         <TouchableOpacity onPress={() => changeMonth("prev")}>
           <ThemedText type="subtitle" style={styles.changeMonthButton}>
             &lt;

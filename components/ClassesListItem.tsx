@@ -55,7 +55,7 @@ const ClassesListItem: React.FC<ClassesListItemProps> = ({
             flexDirection: "column",
             width: 50,
             borderLeftWidth: 1,
-            borderLeftColor: "#fff",
+            borderLeftColor: "#ddd",
           }}
           onToggleChange={(value) => setWeek(value ? "B" : "A")}
         />
