@@ -1,20 +1,26 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
-
-import { useColorScheme } from '@/hooks/useColorScheme';
-
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
+import React, { useEffect } from "react";
+import {
+  DefaultTheme,
+  DarkTheme,
+  ThemeProvider,
+} from "@react-navigation/native";
+import { Stack, useRouter } from "expo-router";
+import { StatusBar } from "react-native";
+import { useFonts } from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
+import { WeeksProvider } from "@/ctx/WeeksContext";
+import {
+  ThemeToggleProvider,
+  useThemeToggle,
+} from "@/hooks/ThemeToggleContext";
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
+  const router = useRouter();
   const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
+
+  SplashScreen.preventAutoHideAsync();
 
   useEffect(() => {
     if (loaded) {
@@ -27,11 +33,33 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
+    <ThemeToggleProvider>
+      <AppContent />
+    </ThemeToggleProvider>
+  );
+}
+
+function AppContent() {
+  const { theme } = useThemeToggle(); // Używamy motywu z kontekstu
+
+  // Mapowanie stringów na obiekty Theme
+  const navigationTheme = theme === "dark" ? DarkTheme : DefaultTheme;
+
+  return (
+    <ThemeProvider value={navigationTheme}>
+      <WeeksProvider>
+        <StatusBar
+          barStyle={theme === "dark" ? "light-content" : "dark-content"}
+        />
+        <Stack>
+          <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="options"
+            options={{ headerTitle: "Ustawienia" }}
+          />
+          <Stack.Screen name="initial" options={{ headerShown: false }} />
+        </Stack>
+      </WeeksProvider>
     </ThemeProvider>
   );
 }
