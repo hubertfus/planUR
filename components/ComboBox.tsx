@@ -19,7 +19,7 @@ interface ComboBoxProps {
 
 const ComboBox: React.FC<ComboBoxProps> = ({ data, type, name, onSelect }) => {
   const colorScheme = useColorScheme() ?? "light";
-
+  console.log(colorScheme);
   const [isDropdownVisible, setDropdownVisible] = useState<boolean>(false);
   const [selectedItem, setSelectedItem] = useState<string | null>(data[0]);
 
@@ -52,7 +52,6 @@ const ComboBox: React.FC<ComboBoxProps> = ({ data, type, name, onSelect }) => {
             style={[
               styles.inputText,
               {
-                color: Colors[colorScheme].text,
                 borderColor:
                   colorScheme === "dark" ? Colors.light.tint : "#ccc",
               },

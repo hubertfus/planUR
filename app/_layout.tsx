@@ -9,10 +9,7 @@ import { StatusBar } from "react-native";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { WeeksProvider } from "@/ctx/WeeksContext";
-import {
-  ThemeToggleProvider,
-  useThemeToggle,
-} from "@/hooks/ThemeToggleContext";
+import { ThemeToggleProvider, useThemeToggle } from "@/ctx/ThemeToggleContext";
 
 export default function RootLayout() {
   const router = useRouter();

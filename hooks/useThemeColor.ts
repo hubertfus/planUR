@@ -1,5 +1,4 @@
-// useThemeColor.ts
-import { useThemeToggle } from "@/hooks/ThemeToggleContext";
+import { useThemeToggle } from "@/ctx/ThemeToggleContext";
 
 type ThemeColors = {
   light: string;
@@ -12,6 +11,5 @@ export function useThemeColor(
 ): string {
   const { theme } = useThemeToggle();
   
-  // Zapewnij, że zawsze zwracany jest string
   return theme === "dark" ? colors.dark : colors.light;
 }
