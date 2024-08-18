@@ -19,7 +19,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import ClassesListItem from "@/components/ClassesListItem";
 import { WeeksContext } from "@/ctx/WeeksContext";
-import { useThemeToggle } from "@/hooks/ThemeToggleContext";
+import { useThemeToggle } from "@/ctx/ThemeToggleContext";
 
 export default function Index() {
   const router = useRouter();

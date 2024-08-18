@@ -3,6 +3,7 @@ import ComboBox from "@/components/ComboBox";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
+import { useThemeColor } from "@/hooks/useThemeColor";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
@@ -24,6 +25,10 @@ type MajorsArray = Major[][][];
 
 export default function Index() {
   const colorScheme = useColorScheme() ?? "light";
+  const colorPlaceholderScheme = useThemeColor(
+    { light: "#000000", dark: "#ffffff" },
+    "dark"
+  );
   const router = useRouter();
   const [data, setData] = useState<MajorsArray>();
   const [userData, setUserData] = useState({
@@ -60,7 +65,7 @@ export default function Index() {
       );
     }
   };
-
+  console.log(colorScheme);
   useEffect(() => {
     try {
       fetch(
@@ -127,7 +132,7 @@ export default function Index() {
             placeholder={`podaj liczbe z przedziału 1 -${
               data && data[userData.type][userData.year][userData.major].groups
             }`}
-            placeholderTextColor={Colors[colorScheme].text}
+            placeholderTextColor={colorPlaceholderScheme}
             style={{
               borderColor: colorScheme === "dark" ? Colors.light.tint : "#ccc",
               borderWidth: 1,
