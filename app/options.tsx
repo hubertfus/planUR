@@ -9,6 +9,7 @@ import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   StyleSheet,
   TextInput,
   useColorScheme,
@@ -39,6 +40,7 @@ export default function Index() {
   });
 
   const handleSelect = (item: string, name?: string, index?: number) => {
+    if (name === "group" && index !== undefined) index += 1;
     if (name) {
       setUserData((prev) => ({
         ...prev,
@@ -49,23 +51,38 @@ export default function Index() {
 
   const sumbitHandler = () => {
     if (data) {
-      fetch(data[userData.type][userData.year][userData.major].path).then(
-        (res) =>
+      fetch(data[userData.type][userData.year][userData.major].path)
+        .then((res) =>
           res.json().then((data) => {
-            try {
-              AsyncStorage.setItem(
-                "schedule",
-                JSON.stringify(data[userData.group])
+            if (data[userData.group])
+              try {
+                AsyncStorage.setItem(
+                  "schedule",
+                  JSON.stringify(data[userData.group])
+                );
+                router.replace("/");
+              } catch (e) {
+                Alert.alert(
+                  "aha",
+                  "Prawdopodobnie nie mam planu dla was. \n napisz mi na dc to zobaczymy co da się zrobić -> kierowcapksu"
+                );
+              }
+            else
+              Alert.alert(
+                "aha",
+                "Prawdopodobnie nie mam planu dla was. \n napisz mi na dc to zobaczymy co da się zrobić -> kierowcapksu"
               );
-              router.replace("/");
-            } catch (e) {
-              console.log(e);
-            }
           })
-      );
+        )
+        .catch(() =>
+          Alert.alert(
+            "aha",
+            "Prawdopodobnie nie mam planu dla was. \n napisz mi na dc to zobaczymy co da się zrobić -> kierowcapksu"
+          )
+        );
     }
   };
-  console.log(colorScheme);
+
   useEffect(() => {
     try {
       fetch(
@@ -95,6 +112,7 @@ export default function Index() {
           <ComboBox
             data={data.map((_, i) => `stopień ${i + 1}`)}
             onSelect={handleSelect}
+            keyExtractor={(item) => item} 
             type="stopień"
             name="type"
           />
@@ -108,6 +126,7 @@ export default function Index() {
                 : []
             }
             onSelect={handleSelect}
+            keyExtractor={(_, index) => `rok-${index}`} 
             type="rok studiów"
             name="year"
           />
@@ -121,30 +140,28 @@ export default function Index() {
                 : []
             }
             onSelect={handleSelect}
+            keyExtractor={(item) => item} 
             type="kierunek"
             name="major"
           />
         </View>
         <View style={styles.ComboBoxContainer}>
           <ThemedText type={"subtitle"}>lab:</ThemedText>
-          <TextInput
-            inputMode="numeric"
-            placeholder={`podaj liczbe z przedziału 1 -${
-              data && data[userData.type][userData.year][userData.major].groups
-            }`}
-            placeholderTextColor={colorPlaceholderScheme}
-            style={{
-              borderColor: colorScheme === "dark" ? Colors.light.tint : "#ccc",
-              borderWidth: 1,
-              padding: 10,
-              borderRadius: 8,
-              color: Colors[colorScheme].text,
-              fontSize: 16,
-            }}
-            maxLength={2}
-            onChangeText={(e) =>
-              setUserData((prev) => ({ ...prev, group: parseInt(e) }))
+          <ComboBox
+            data={
+              userData.type >= 0 &&
+              userData.year >= 0 &&
+              userData.major >= 0
+                ? Array.from(
+                    { length: Number(data[userData.type][userData.year][userData.major].groups) },
+                    (_, i) => `Lab ${i + 1}`
+                  )
+                : []
             }
+            onSelect={handleSelect}
+            keyExtractor={(_, index) => `lab-${index}`} 
+            type="lab"
+            name="group"
           />
         </View>
       </View>

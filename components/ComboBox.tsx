@@ -14,12 +14,18 @@ interface ComboBoxProps {
   data: string[];
   type: string;
   name?: string;
+  keyExtractor?: (item: string, index: number) => string;
   onSelect?: (item: string, name?: string, index?: number) => void;
 }
 
-const ComboBox: React.FC<ComboBoxProps> = ({ data, type, name, onSelect }) => {
+const ComboBox: React.FC<ComboBoxProps> = ({
+  data,
+  type,
+  name,
+  keyExtractor,
+  onSelect,
+}) => {
   const colorScheme = useColorScheme() ?? "light";
-  console.log(colorScheme);
   const [isDropdownVisible, setDropdownVisible] = useState<boolean>(false);
   const [selectedItem, setSelectedItem] = useState<string | null>(data[0]);
 
@@ -72,7 +78,7 @@ const ComboBox: React.FC<ComboBoxProps> = ({ data, type, name, onSelect }) => {
         >
           <FlatList
             data={data}
-            keyExtractor={(_, index) => index.toString()}
+            keyExtractor={keyExtractor || ((_, index) => index.toString())}
             renderItem={({ item, index }) => (
               <TouchableOpacity
                 style={[
