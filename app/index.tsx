@@ -20,6 +20,7 @@ import { useRouter } from "expo-router";
 import ClassesListItem from "@/components/ClassesListItem";
 import { WeeksContext } from "@/ctx/WeeksContext";
 import { useThemeToggle } from "@/ctx/ThemeToggleContext";
+import Toggle from "@/components/Toggle";
 
 export default function Index() {
   const router = useRouter();
@@ -105,12 +106,30 @@ export default function Index() {
         />
       </View>
       <DateSpinner currentDate={date} onDateSelected={handleDateSelected} />
+      <Toggle
+        label1="A"
+        label2="B"
+        defaultValue={week === "B"}
+        containerStyle={{
+          flexDirection: "row",
+          borderLeftWidth: 1,
+        }}
+        onToggleChange={(value) => setWeek(value ? "B" : "A")}
+      />
       {schedule ? (
         date.getDay() !== 0 && schedule[date.getDay() - 1] ? (
           <FlatList
             data={schedule[date.getDay() - 1] || []}
             renderItem={({ item }) => {
-              return <ClassesListItem classes={item} currentWeek={week} />;
+              return (
+                item && (
+                  <ClassesListItem
+                    classes={item}
+                    currentWeek={week}
+                    setWeek={setWeek}
+                  />
+                )
+              );
             }}
             keyExtractor={(_, index) =>
               `${date.toDateString()}-${date.getDay()}-${index}`

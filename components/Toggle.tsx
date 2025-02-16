@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -38,7 +38,9 @@ const Toggle: React.FC<ToggleProps> = ({
   onToggleChange,
 }) => {
   const [isToggled, setIsToggled] = useState(defaultValue);
-
+  useEffect(() => {
+    setIsToggled(defaultValue);
+  }, [defaultValue]);
   const toggleSwitch = () => {
     const newValue = !isToggled;
     setIsToggled(newValue);

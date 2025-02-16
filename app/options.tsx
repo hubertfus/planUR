@@ -3,10 +3,12 @@ import ComboBox from "@/components/ComboBox";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
+import { WeeksContext } from "@/ctx/WeeksContext";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+
 import {
   ActivityIndicator,
   Alert,
@@ -25,6 +27,8 @@ interface Major {
 type MajorsArray = Major[][][];
 
 export default function Index() {
+  const { getWeekType, setWeeks } = useContext(WeeksContext);
+
   const colorScheme = useColorScheme() ?? "light";
   const colorPlaceholderScheme = useThemeColor(
     { light: "#000000", dark: "#ffffff" },
@@ -50,12 +54,25 @@ export default function Index() {
   };
 
   const sumbitHandler = () => {
+    fetch(
+      "https://raw.githubusercontent.com/hubertfus/planUR-data/main/weeks.json"
+    ).then((e) =>
+      e.json().then((res) => {
+        if (res) {
+          console.log(res);
+          AsyncStorage.removeItem("weeks");
+          AsyncStorage.setItem("weeks", JSON.stringify(res));
+          setWeeks(res);
+        }
+      })
+    );
     if (data) {
       fetch(data[userData.type][userData.year][userData.major].path)
         .then((res) =>
           res.json().then((data) => {
             if (data[userData.group])
               try {
+                AsyncStorage.removeItem("schedule");
                 AsyncStorage.setItem(
                   "schedule",
                   JSON.stringify(data[userData.group])
@@ -74,7 +91,7 @@ export default function Index() {
               );
           })
         )
-        .catch(() =>
+        .catch((e) =>
           Alert.alert(
             "aha",
             "Prawdopodobnie nie mam planu dla was. \n napisz mi na dc to zobaczymy co da się zrobić -> kierowcapksu"
@@ -112,7 +129,7 @@ export default function Index() {
           <ComboBox
             data={data.map((_, i) => `stopień ${i + 1}`)}
             onSelect={handleSelect}
-            keyExtractor={(item) => item} 
+            keyExtractor={(item) => item}
             type="stopień"
             name="type"
           />
@@ -126,7 +143,7 @@ export default function Index() {
                 : []
             }
             onSelect={handleSelect}
-            keyExtractor={(_, index) => `rok-${index}`} 
+            keyExtractor={(_, index) => `rok-${index}`}
             type="rok studiów"
             name="year"
           />
@@ -140,7 +157,7 @@ export default function Index() {
                 : []
             }
             onSelect={handleSelect}
-            keyExtractor={(item) => item} 
+            keyExtractor={(item) => item}
             type="kierunek"
             name="major"
           />
@@ -149,17 +166,20 @@ export default function Index() {
           <ThemedText type={"subtitle"}>lab:</ThemedText>
           <ComboBox
             data={
-              userData.type >= 0 &&
-              userData.year >= 0 &&
-              userData.major >= 0
+              userData.type >= 0 && userData.year >= 0 && userData.major >= 0
                 ? Array.from(
-                    { length: Number(data[userData.type][userData.year][userData.major].groups) },
+                    {
+                      length: Number(
+                        data[userData.type][userData.year][userData.major]
+                          .groups
+                      ),
+                    },
                     (_, i) => `Lab ${i + 1}`
                   )
                 : []
             }
             onSelect={handleSelect}
-            keyExtractor={(_, index) => `lab-${index}`} 
+            keyExtractor={(_, index) => `lab-${index}`}
             type="lab"
             name="group"
           />

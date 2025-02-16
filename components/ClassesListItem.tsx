@@ -1,25 +1,49 @@
-import React, { useState } from "react";
+import React from "react";
 import { StyleSheet, View } from "react-native";
 import { ThemedText } from "./ThemedText";
 import Toggle from "./Toggle";
 
+type Class = {
+  class: string;
+  endAt: string;
+  name: string;
+  startAt: string;
+  teacher: string;
+  type: string;
+  week?: "A" | "B";
+};
+
 type ClassesListItemProps = {
   classes: Class | Class[];
   currentWeek: "A" | "B";
+  setWeek: (e: "A" | "B") => void;
 };
 
 const ClassesListItem: React.FC<ClassesListItemProps> = ({
   classes,
   currentWeek,
+  setWeek,
 }) => {
-  const [week, setWeek] = useState<"A" | "B">(currentWeek);
-  const hasWeekInfo =
-    Array.isArray(classes) && classes.some((classItem) => classItem.week);
+  const classArray = Array.isArray(classes) ? classes : [classes];
 
-  const renderClasses = () => {
-    return (Array.isArray(classes) ? classes : [classes])
-      .filter((classItem) => !hasWeekInfo || classItem.week === week)
-      .map((classItem, index) => (
+  // Sprawdza, czy istnieją klasy do wyświetlenia dla aktualnego tygodnia
+  const filteredClasses = classArray.filter(
+    (classItem) => !classItem.week || classItem.week === currentWeek // Klasy bez tygodnia lub zgodne z aktualnym tygodniem
+  );
+
+  // Sprawdza, czy klasy mają różne tygodnie
+  const hasDifferentWeeks =
+    classArray.some((classItem) => classItem.week === "A") &&
+    classArray.some((classItem) => classItem.week === "B");
+
+  // Jeśli brak klas do wyświetlenia, nie renderuj kafelka
+  if (filteredClasses.length === 0) {
+    return null;
+  }
+
+  return (
+    <View style={styles.container}>
+      {filteredClasses.map((classItem, index) => (
         <View key={index} style={styles.itemContainer}>
           <ThemedText style={{ textAlign: "center" }}>
             {classItem.type}
@@ -40,17 +64,12 @@ const ClassesListItem: React.FC<ClassesListItemProps> = ({
             </ThemedText>
           </View>
         </View>
-      ));
-  };
-
-  return (
-    <View style={styles.container}>
-      {renderClasses()}
-      {hasWeekInfo && (
+      ))}
+      {hasDifferentWeeks && (
         <Toggle
           label1="A"
           label2="B"
-          defaultValue={week === "B"}
+          defaultValue={currentWeek === "B"}
           containerStyle={{
             flexDirection: "column",
             width: 50,
